@@ -69,33 +69,3 @@ class Superellipsoid:
         pass
         #    # tutaj bedzie magia
         #    return False
-
-
-s1 = Superellipsoid(2, 2, 2, 3, np.array([[0], [0], [0]]),
-                    np.array([[0.731, -0.682, 0.000], [0.682, 0.731, 0.000], [0.000, 0.000, 1.000]]))
-
-print(s1.shape_function(np.array([[1], [1], [1]])))
-print(s1.orientation)
-
-print('r z wezykiem:')
-print(s1.r_relative(np.array([[1], [1], [1]])))
-
-print('gradient:')
-print(s1.gradient(np.array([[1], [1], [1]])))
-
-print('---')
-print(s1.gradient(np.array([[1], [1], [1]])))
-print('---')
-
-s2 = Superellipsoid(2, 2, 2, 3, np.array([[-3.456], [9.345], [-8.456]]),
-                    np.array([[0.993, 0.000, 0.122], [0.066, 0.839, -0.541], [-0.102, 0.545, 0.832]]))
-
-print(s2.r_relative(np.array([[0.999], [0], [-2.345]])))
-
-s3 = Superellipsoid(10, 10, 10, 3, np.array([[0], [0], [0]]),
-                    np.array([[0.731, -0.682, 0.000], [0.682, 0.731, 0.000], [0.000, 0.000, 1.000]]))
-
-print('Inny wektor')
-print(s1.inner_shape_function(np.array([[1.8], [1.8], [1.8]])))
-print(s1.gradient(np.array([[1.8], [1.8], [1.8]])))
-print(s1.nabla(np.array([[1.8], [1.8], [1.8]])))
