@@ -127,6 +127,12 @@ class Superellipsoid:
         return np.dot(g_func_prime(inner_shape_func), self.hessian(r)) \
                + g_func_double_prime(inner_shape_func) * gradient * np.transpose(gradient)
 
+    def matrix_M(self, r, small_lambda, other_superellipsoid):
+        return small_lambda * self.nabla_2(r) + (1-small_lambda) * other_superellipsoid.nabla_2(r)
+
+    def delta_g(self, r, other_superellipsoid):
+        return self.nabla(r) - other_superellipsoid.nabla(r)
+
     def overlap(self, another_superellipsoid):
         pass
         #    # tutaj bedzie magia
