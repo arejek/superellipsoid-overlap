@@ -102,7 +102,9 @@ class Superellipsoid:
             H[i][1] = H[i][1](r_relative[1][0])
             H[i][2] = H[i][2](r_relative[2][0])
 
-        return np.array(H)
+        # 'wlasciwy' hessjan to macierz H
+
+        return np.dot(np.dot(self.orientation, H), self.orientation.transpose())
 
     def nabla_2(self, r):
 
