@@ -133,6 +133,12 @@ class Superellipsoid:
     def delta_g(self, r, other_superellipsoid):
         return self.nabla(r) - other_superellipsoid.nabla(r)
 
+    def zeta_lbd_lbd(self, r, other_superellipsoid, small_lambda):
+        dg = self.delta_g(r, other_superellipsoid)
+        dgT = np.transpose(dg)
+        M = self.matrix_M(r, small_lambda, other_superellipsoid)
+        return np.dot(np.dot(dgT, M), dg)
+
     def overlap(self, another_superellipsoid):
         pass
         #    # tutaj bedzie magia
