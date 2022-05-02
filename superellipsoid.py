@@ -135,11 +135,47 @@ class Superellipsoid:
     def delta_g(self, r, other_superellipsoid):
         return self.nabla(r) - other_superellipsoid.nabla(r)
 
-    def zeta_lbd_lbd(self, r, other_superellipsoid, small_lambda):
+    def zeta_lbd_lbd(self, r, small_lambda, other_superellipsoid):
         dg = self.delta_g(r, other_superellipsoid)
         dgT = np.transpose(dg)
         M = self.matrix_M(r, small_lambda, other_superellipsoid)
-        return np.dot(np.dot(dgT, M), dg)
+        M_inv = np.linalg.inv(M)  # tutaj wczesniej zapomnialam ze M^(-1)
+        return np.dot(np.dot(dgT, M_inv), dg)
+
+    def nabla_of_both(self, r, small_lambda, other_superellipsoid):
+        return small_lambda * self.nabla(r) + (1-small_lambda) * other_superellipsoid.nabla(r)
+
+    def delta_lambda(self, r, small_lambda, other_superellipsoid):
+
+        # (-1)/zeta_lbd_lbd * [(A.shape_func - B.shape_func) - delta_g^T * M^(-1) * nabla_of_both]
+
+        dg = self.delta_g(r, other_superellipsoid)
+        dgT = np.transpose(dg)
+        M = self.matrix_M(r, small_lambda, other_superellipsoid)
+        M_inv = np.linalg.inv(M)
+        nob = self.nabla_of_both(r, small_lambda, other_superellipsoid)
+
+        d_l = self.shape_function(r) - other_superellipsoid.shape_function(r)
+        d_l = d_l - np.dot(np.dot(dgT, M_inv), nob)
+        d_l = (-1) * self.zeta_lbd_lbd(r, small_lambda, other_superellipsoid) * d_l
+
+        return d_l
+
+    def delta_r(self, r, small_lambda, other_superellipsoid):
+
+        # M^(-1) * (delta_g * delta_lambda - nabla_of_both)
+
+        M = self.matrix_M(r, small_lambda, other_superellipsoid)
+        M_inv = np.linalg.inv(M)
+
+        dg = self.delta_g(r, other_superellipsoid)
+        d_lbd = self.delta_lambda(r, small_lambda, other_superellipsoid)
+        nob = self.nabla_of_both(r, small_lambda, other_superellipsoid)
+
+        d_r = dg * d_lbd - nob
+        d_r = np.dot(M_inv, d_r)
+
+        return d_r
 
     def overlap(self, another_superellipsoid):
         pass
