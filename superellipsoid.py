@@ -123,29 +123,29 @@ class Superellipsoid:
         return np.dot(g_func_prime(inner_shape_func), self.hessian(r)) \
                + g_func_double_prime(inner_shape_func) * gradient * np.transpose(gradient)
 
-    def matrix_M(self, small_lambda, this_sp_nabla_2, other_sp_nabla_2):
-        return small_lambda * this_sp_nabla_2 + (1-small_lambda) * other_sp_nabla_2
+    def matrix_M(self, lbd, this_sp_nabla_2, other_sp_nabla_2):
+        return lbd * this_sp_nabla_2 + (1 - lbd) * other_sp_nabla_2
 
     def delta_g(self, this_sp_nabla, other_sp_nabla):
         return this_sp_nabla - other_sp_nabla
 
     def zeta_lbd_lbd(self, delta_g, matrix_M):
-        dgT = np.transpose(delta_g)
-        M_inv = np.linalg.inv(matrix_M)  # tutaj wczesniej zapomnialam ze M^(-1)
-        return np.dot(np.dot(dgT, M_inv), delta_g)
+        delta_g_T = np.transpose(delta_g)
+        matrix_M_inv = np.linalg.inv(matrix_M)  # tutaj wczesniej zapomnialam ze M^(-1)
+        return np.dot(np.dot(delta_g_T, matrix_M_inv), delta_g)
 
-    def nabla_of_both(self, small_lambda, this_sp_nabla, other_sp_nabla):
-        return small_lambda * this_sp_nabla + (1-small_lambda) * other_sp_nabla
+    def nabla_of_both(self, lbd, this_sp_nabla, other_sp_nabla):
+        return lbd * this_sp_nabla + (1 - lbd) * other_sp_nabla
 
     def delta_lambda(self, zeta_lbd_lbd, this_sp_shape_func, other_sp_shape_func, delta_g, matrix_M, nabla_of_both):
 
         # (-1)/zeta_lbd_lbd * [(A.shape_func - B.shape_func) - delta_g^T * M^(-1) * nabla_of_both]
 
-        dgT = np.transpose(delta_g)
-        M_inv = np.linalg.inv(matrix_M)
+        delta_g_T = np.transpose(delta_g)
+        matrix_M_inv = np.linalg.inv(matrix_M)
 
         delta_lambda = this_sp_shape_func - other_sp_shape_func
-        delta_lambda = delta_lambda - np.dot(np.dot(dgT, M_inv), nabla_of_both)
+        delta_lambda = delta_lambda - np.dot(np.dot(delta_g_T, matrix_M_inv), nabla_of_both)
         delta_lambda = (-1) * zeta_lbd_lbd * delta_lambda
 
         return delta_lambda
@@ -154,10 +154,10 @@ class Superellipsoid:
 
         # M^(-1) * (delta_g * delta_lambda - nabla_of_both)
 
-        M_inv = np.linalg.inv(matrix_M)
+        matrix_M_inv = np.linalg.inv(matrix_M)
 
         delta_r = delta_g * delta_lambda - nabla_of_both
-        delta_r = np.dot(M_inv, delta_r)
+        delta_r = np.dot(matrix_M_inv, delta_r)
 
         return delta_r
 
