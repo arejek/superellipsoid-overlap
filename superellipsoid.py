@@ -46,6 +46,10 @@ def delta_r(matrix_M, delta_g, delta_lambda, nabla_of_both):
     return delta_r
 
 
+def overlap():
+    pass
+
+
 class Superellipsoid:
     def __init__(self, a, b, c, p, r0, orientation):
         self.a = a
@@ -100,13 +104,8 @@ class Superellipsoid:
         g_func_prime = sp.lambdify(x, g_func_prime)
 
         if inner_shape_func < 0:
-            print('shape function returned negative number')
             return
         else:
-            print('===')
-            print('g\'')
-            print(g_func_prime(inner_shape_func))
-            print('===')
             return g_func_prime(inner_shape_func) * self.gradient(r)
 
     def hessian(self, r):
@@ -126,14 +125,6 @@ class Superellipsoid:
         H = [[derivative_r1, derivative_r1, derivative_r1],
              [derivative_r2, derivative_r2, derivative_r2],
              [derivative_r3, derivative_r3, derivative_r3]]
-
-        """
-        # Sprawdzenie czy hessjan jest poprawny
-        for i in range(3):
-            H[i][0] = H[i][0].diff(r1)
-            H[i][1] = H[i][1].diff(r2)
-            H[i][2] = H[i][2].diff(r3)
-        print(H)"""
 
         r_relative = self.r_relative(r)
 
@@ -166,14 +157,3 @@ class Superellipsoid:
 
         return np.dot(g_func_prime(inner_shape_func), self.hessian(r)) \
                + g_func_double_prime(inner_shape_func) * gradient * np.transpose(gradient)
-
-    def overlap(self, r_c, another_superellipsoid):
-        # potrzebujemy tego co do delta_lambda()
-        # delta_lambda = self.delta_lambda(r, small_lambda, another_superellipsoid)
-        # delta_rC = self.delta_r()
-
-        nabla = self.nabla(r_c)
-
-        pass
-        #    # tutaj bedzie magia
-        #    return False
