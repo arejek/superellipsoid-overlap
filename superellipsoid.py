@@ -123,21 +123,19 @@ class Superellipsoid:
         return np.dot(g_func_prime(inner_shape_func), self.hessian(r)) \
                + g_func_double_prime(inner_shape_func) * gradient * np.transpose(gradient)
 
-    def matrix_M(self, r, small_lambda, other_superellipsoid):
-        return small_lambda * self.nabla_2(r) + (1-small_lambda) * other_superellipsoid.nabla_2(r)
+    def matrix_M(self, small_lambda, this_sp_nabla_2, other_sp_nabla_2):
+        return small_lambda * this_sp_nabla_2 + (1-small_lambda) * other_sp_nabla_2
 
-    def delta_g(self, r, other_superellipsoid):
-        return self.nabla(r) - other_superellipsoid.nabla(r)
+    def delta_g(self, this_sp_nabla, other_sp_nabla):
+        return this_sp_nabla - other_sp_nabla
 
-    def zeta_lbd_lbd(self, r, small_lambda, other_superellipsoid):
-        dg = self.delta_g(r, other_superellipsoid)
-        dgT = np.transpose(dg)
-        M = self.matrix_M(r, small_lambda, other_superellipsoid)
-        M_inv = np.linalg.inv(M)  # tutaj wczesniej zapomnialam ze M^(-1)
-        return np.dot(np.dot(dgT, M_inv), dg)
+    def zeta_lbd_lbd(self, delta_g, matrix_M):
+        dgT = np.transpose(delta_g)
+        M_inv = np.linalg.inv(matrix_M)  # tutaj wczesniej zapomnialam ze M^(-1)
+        return np.dot(np.dot(dgT, M_inv), delta_g)
 
-    def nabla_of_both(self, r, small_lambda, other_superellipsoid):
-        return small_lambda * self.nabla(r) + (1-small_lambda) * other_superellipsoid.nabla(r)
+    def nabla_of_both(self, small_lambda, this_sp_nabla, other_sp_nabla):
+        return small_lambda * this_sp_nabla + (1-small_lambda) * other_sp_nabla
 
     def delta_lambda(self, zeta_lbd_lbd, this_sp_shape_func, other_sp_shape_func, delta_g, matrix_M, nabla_of_both):
 
