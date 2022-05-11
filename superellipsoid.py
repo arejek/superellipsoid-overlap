@@ -117,12 +117,6 @@ class Superellipsoid:
         g_func_double_prime = sp.lambdify(x, g_func_double_prime)
 
         # nabla_2 = g_prime * hessian + g_double_prime * gradient * gradientT
-        """
-        print('g_prime * hessian:')
-        print(np.dot(g_func_prime(inner_shape_func), self.hessian(r)))
-        print('g_double_prime * gradient * gradientT')
-        gradient = self.gradient(r)
-        print(g_func_double_prime(inner_shape_func) * gradient * np.transpose(gradient))"""
 
         gradient = self.gradient(r)
 
@@ -177,7 +171,13 @@ class Superellipsoid:
 
         return d_r
 
-    def overlap(self, another_superellipsoid):
+    def overlap(self, r_c, another_superellipsoid):
+        # potrzebujemy tego co do delta_lambda()
+        # delta_lambda = self.delta_lambda(r, small_lambda, another_superellipsoid)
+        # delta_rC = self.delta_r()
+
+        nabla = self.nabla(r_c)
+
         pass
         #    # tutaj bedzie magia
         #    return False
