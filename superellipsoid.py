@@ -152,21 +152,16 @@ class Superellipsoid:
 
         return delta_lambda
 
-    def delta_r(self, r, small_lambda, other_superellipsoid):
+    def delta_r(self, matrix_M, delta_g, delta_lambda, nabla_of_both):
 
         # M^(-1) * (delta_g * delta_lambda - nabla_of_both)
 
-        M = self.matrix_M(r, small_lambda, other_superellipsoid)
-        M_inv = np.linalg.inv(M)
+        M_inv = np.linalg.inv(matrix_M)
 
-        dg = self.delta_g(r, other_superellipsoid)
-        d_lbd = self.delta_lambda(r, small_lambda, other_superellipsoid)
-        nob = self.nabla_of_both(r, small_lambda, other_superellipsoid)
+        delta_r = delta_g * delta_lambda - nabla_of_both
+        delta_r = np.dot(M_inv, delta_r)
 
-        d_r = dg * d_lbd - nob
-        d_r = np.dot(M_inv, d_r)
-
-        return d_r
+        return delta_r
 
     def overlap(self, r_c, another_superellipsoid):
         # potrzebujemy tego co do delta_lambda()
