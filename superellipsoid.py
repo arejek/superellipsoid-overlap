@@ -12,7 +12,7 @@ class Superellipsoid:
         self.orientation = orientation
 
     def r_relative(self, r):
-        return np.dot(self.orientation.transpose(), np.subtract(r, self.r0))
+        return np.dot(np.linalg.inv(self.orientation), np.subtract(r, self.r0))
 
     def inner_shape_function(self, r):
         r_relative = self.r_relative(r)
