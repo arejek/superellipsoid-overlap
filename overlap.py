@@ -45,5 +45,40 @@ def delta_r(matrix_M, delta_g, delta_lambda, nabla_of_both):
     return delta_r
 
 
-def overlap():
-    pass
+def overlap(sp_A, sp_B):
+
+    lbd = 0.5
+    r_C = (sp_A.r0 + sp_B.r0) / 2
+
+    dlt_lbd = 0
+    dlt_r_C = np.array([[0], [0], [0]])
+
+    num_of_iterations = 10
+
+    for n in range(num_of_iterations):
+
+        lbd = lbd - dlt_lbd
+        r_C = r_C + dlt_r_C
+
+        print("------------", end="")
+        print(n, end="")
+        print("------------")
+        print("lbd:")
+        print(lbd)
+        print("r_C:")
+        print(r_C)
+
+        nabla_A = sp_A.nabla(r_C)
+        nabla_B = sp_B.nabla(r_C)
+
+        dlt_g = delta_g(nabla_A, nabla_B)
+        M = matrix_M(lbd, sp_A.nabla_2(r_C), sp_B.nabla_2(r_C))
+        zeta = zeta_lbd_lbd(dlt_g, M)
+        nob = nabla_of_both(lbd, nabla_A, nabla_B)
+
+        dlt_lbd = delta_lambda(zeta, sp_A.shape_function(r_C), sp_B.shape_function(r_C), dlt_g, M, nob)
+        dlt_r_C = delta_r(M, dlt_g, dlt_lbd, nob)
+
+    pw_potential = lbd * sp_A.shape_function(r_C) + (1-lbd) * sp_B.shape_function(r_C)
+
+    return pw_potential
