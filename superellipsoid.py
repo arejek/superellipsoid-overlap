@@ -22,34 +22,34 @@ class Superellipsoid:
     def shape_function(self, r):
         return np.power(self.inner_shape_function(r), 1/self.p) - 1
 
-    def gradient(self, r):
+    def gradient(self, r_C):
 
-        r1 = sp.Symbol('r1')
-        r2 = sp.Symbol('r2')
-        r3 = sp.Symbol('r3')
+        rC1 = sp.Symbol('rC1')
+        rC2 = sp.Symbol('rC2')
+        rC3 = sp.Symbol('rC3')
 
         p = self.p
 
-        inner_shape_function_equation = (r1 / self.a) ** (2 * p) + (r2 / self.b) ** (2 * p) + (r3 / self.c) ** (2 * p)
+        inner_shape_function_equation = (rC1 / self.a) ** (2 * p) + (rC2 / self.b) ** (2 * p) + (rC3 / self.c) ** (2 * p)
 
-        derivative_1 = inner_shape_function_equation.diff(r1)
-        derivative_2 = inner_shape_function_equation.diff(r2)
-        derivative_3 = inner_shape_function_equation.diff(r3)
+        derivative_1 = inner_shape_function_equation.diff(rC1)
+        derivative_2 = inner_shape_function_equation.diff(rC2)
+        derivative_3 = inner_shape_function_equation.diff(rC3)
 
-        derivative_1 = sp.lambdify(r1, derivative_1)
-        derivative_2 = sp.lambdify(r2, derivative_2)
-        derivative_3 = sp.lambdify(r3, derivative_3)
+        derivative_1 = sp.lambdify(rC1, derivative_1)
+        derivative_2 = sp.lambdify(rC2, derivative_2)
+        derivative_3 = sp.lambdify(rC3, derivative_3)
 
-        r_relative = self.r_relative(r)
+        r_relative = self.r_relative(r_C)
 
         # to jest 'wlasciwy' gradient
         grad = np.array([derivative_1(r_relative[0]), derivative_2(r_relative[1]), derivative_3(r_relative[2])])
 
         return np.dot(self.orientation, grad)
 
-    def nabla(self, r):
+    def nabla(self, r_C):
 
-        inner_shape_func = self.inner_shape_function(r)[0]
+        inner_shape_func = self.inner_shape_function(r_C)[0]
         x = sp.Symbol('x')
         g_func = x ** (1 / self.p)
         g_func_prime = g_func.diff(x)
@@ -58,32 +58,32 @@ class Superellipsoid:
         if inner_shape_func < 0:
             return
         else:
-            return g_func_prime(inner_shape_func) * self.gradient(r)
+            return g_func_prime(inner_shape_func) * self.gradient(r_C)
 
-    def hessian(self, r):
+    def hessian(self, r_C):
 
-        r1 = sp.Symbol('r1')
-        r2 = sp.Symbol('r2')
-        r3 = sp.Symbol('r3')
+        rC1 = sp.Symbol('rC1')
+        rC2 = sp.Symbol('rC2')
+        rC3 = sp.Symbol('rC3')
 
         p = self.p
 
-        inner_shape_function_equation = (r1 / self.a) ** (2 * p) + (r2 / self.b) ** (2 * p) + (r3 / self.c) ** (2 * p)
+        inner_shape_function_equation = (rC1 / self.a) ** (2 * p) + (rC2 / self.b) ** (2 * p) + (rC3 / self.c) ** (2 * p)
 
-        derivative_r1 = inner_shape_function_equation.diff(r1)
-        derivative_r2 = inner_shape_function_equation.diff(r2)
-        derivative_r3 = inner_shape_function_equation.diff(r3)
+        derivative_r1 = inner_shape_function_equation.diff(rC1)
+        derivative_r2 = inner_shape_function_equation.diff(rC2)
+        derivative_r3 = inner_shape_function_equation.diff(rC3)
 
         H = [[derivative_r1, derivative_r1, derivative_r1],
              [derivative_r2, derivative_r2, derivative_r2],
              [derivative_r3, derivative_r3, derivative_r3]]
 
-        r_relative = self.r_relative(r)
+        r_relative = self.r_relative(r_C)
 
         for i in range(3):
-            H[i][0] = sp.lambdify(r1, H[i][0].diff(r1))
-            H[i][1] = sp.lambdify(r2, H[i][1].diff(r2))
-            H[i][2] = sp.lambdify(r3, H[i][2].diff(r3))
+            H[i][0] = sp.lambdify(rC1, H[i][0].diff(rC1))
+            H[i][1] = sp.lambdify(rC2, H[i][1].diff(rC2))
+            H[i][2] = sp.lambdify(rC3, H[i][2].diff(rC3))
 
             H[i][0] = H[i][0](r_relative[0][0])
             H[i][1] = H[i][1](r_relative[1][0])
@@ -93,9 +93,9 @@ class Superellipsoid:
 
         return np.dot(np.dot(self.orientation, H), self.orientation.transpose())
 
-    def nabla_2(self, r):
+    def nabla_2(self, r_C):
 
-        inner_shape_func = self.inner_shape_function(r)[0]
+        inner_shape_func = self.inner_shape_function(r_C)[0]
         x = sp.Symbol('x')
         g_func = x ** (1 / self.p)
         g_func_prime = g_func.diff(x)
@@ -105,7 +105,7 @@ class Superellipsoid:
 
         # nabla_2 = g_prime * hessian + g_double_prime * gradient * gradientT
 
-        gradient = self.gradient(r)
+        gradient = self.gradient(r_C)
 
-        return np.dot(g_func_prime(inner_shape_func), self.hessian(r)) \
+        return np.dot(g_func_prime(inner_shape_func), self.hessian(r_C)) \
                + g_func_double_prime(inner_shape_func) * gradient * np.transpose(gradient)

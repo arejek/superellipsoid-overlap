@@ -33,16 +33,16 @@ def delta_lambda(zeta_lbd_lbd, sp_A_shape_func, sp_B_shape_func, delta_g, matrix
     return delta_lambda
 
 
-def delta_r(matrix_M, delta_g, delta_lambda, nabla_of_both):
+def delta_r_C(matrix_M, delta_g, delta_lambda, nabla_of_both):
 
     # M^(-1) * (delta_g * delta_lambda - nabla_of_both)
 
     matrix_M_inv = np.linalg.inv(matrix_M)
 
-    delta_r = delta_g * delta_lambda - nabla_of_both
-    delta_r = np.dot(matrix_M_inv, delta_r)
+    delta_r_C = delta_g * delta_lambda - nabla_of_both
+    delta_r_C = np.dot(matrix_M_inv, delta_r_C)
 
-    return delta_r
+    return delta_r_C
 
 
 def overlap(sp_A, sp_B):
@@ -77,7 +77,7 @@ def overlap(sp_A, sp_B):
         nob = nabla_of_both(lbd, nabla_A, nabla_B)
 
         dlt_lbd = delta_lambda(zeta, sp_A.shape_function(r_C), sp_B.shape_function(r_C), dlt_g, M, nob)
-        dlt_r_C = delta_r(M, dlt_g, dlt_lbd, nob)
+        dlt_r_C = delta_r_C(M, dlt_g, dlt_lbd, nob)
 
     pw_potential = lbd * sp_A.shape_function(r_C) + (1-lbd) * sp_B.shape_function(r_C)
 
