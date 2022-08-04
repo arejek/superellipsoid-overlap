@@ -6,7 +6,7 @@ def matrix_M(lbd, sp_A_nabla_2, sp_B_nabla_2):
 
 
 def delta_g(sp_A_nabla, sp_B_nabla):
-    return sp_A_nabla - sp_B_nabla
+    return sp_B_nabla - sp_A_nabla
 
 
 def zeta_lbd_lbd(delta_g, matrix_M):
@@ -57,7 +57,7 @@ def overlap(sp_A, sp_B):
 
     for n in range(num_of_iterations):
 
-        lbd = lbd - dlt_lbd
+        lbd = lbd + dlt_lbd
         r_C = r_C + dlt_r_C
 
         print("------------", end="")
